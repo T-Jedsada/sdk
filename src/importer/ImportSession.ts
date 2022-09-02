@@ -13,6 +13,7 @@ export class ImportSession extends TypedEventManager<IImportSessionEvents> {
   public ui: UIService
   public api: ApiService
   private $iframe?: ImportFrame
+  private $subscription?: { unsubscribe: () => void }
 
   constructor(public flatfile: Flatfile, public meta: IImportMeta) {
     super()
@@ -106,7 +107,7 @@ export class ImportSession extends TypedEventManager<IImportSessionEvents> {
   }
 
   private subscribeToBatchStatus(): void {
-    return this.api.subscribeBatchStatusUpdated(this.batchId, async (status) => {
+    this.$subscription = this.api.subscribeBatchStatusUpdated(this.batchId, async (status) => {
       if (status === 'evaluate') {
         this.emit('evaluate', this)
       }
@@ -145,9 +146,10 @@ export class ImportSession extends TypedEventManager<IImportSessionEvents> {
 
   /**
    * Close the importer iframe
-   * @todo: kill batch status subscription
    */
   public close(): void {
+    this.$subscription?.unsubscribe()
+
     if (this.$iframe) {
       this.$iframe?.close()
     } else {
