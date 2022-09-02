@@ -41,7 +41,7 @@ export class ApiService {
     })
     this.pubsub = new SubscriptionClient(`${apiUrl.replace(/^http/, 'ws')}/graphql`, {
       reconnect: true,
-      lazy: true,
+      lazy: false,
       connectionParams: {
         isWebSocket: true,
         headers: {
