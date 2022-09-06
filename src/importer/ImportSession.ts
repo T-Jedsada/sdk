@@ -121,7 +121,7 @@ export class ImportSession extends TypedEventManager<IImportSessionEvents> {
       }
 
       if (status === 'cancelled') {
-        const meta = await this.api.init()
+        const meta = await this.api.init(this.meta.synced)
         this.meta = { ...this.meta, ...meta }
         this.init()
       }
